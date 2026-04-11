@@ -1,10 +1,13 @@
 package com.imdat.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Entity
 public class Brand {
@@ -15,37 +18,42 @@ public class Brand {
     @NotBlank
     private String brandName;
 
-    @NotBlank
-    private byte[] img;
+    @NotNull
+    @Lob
+    private Byte[] data;
 
-    @OneToMany(mappedBy = "brand")
+    @JsonIgnore
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
     private List<Product> products = new ArrayList<>();
 
-    public Brand(Integer id, String brandName, @NotBlank byte[] img) {
-        this.id = id;
+    public Brand(String brandName, Byte[] data) {
         this.brandName = brandName;
-        this.img = img;
+        this.data = data;
     }
 
     public Brand() {}
-
-    public Integer getId() {
-        return id;
-    }
 
     public String getBrandName() {
         return brandName;
     }
 
-    public byte[] getImg() {
-        return img;
+    public Byte[] getData() {
+        return data;
     }
 
     public void setBrandName(String brandName) {
         this.brandName = brandName;
     }
 
-    public void setImg(byte[] img) {
-        this.img = img;
+    public void setData(Byte[] data) {
+        this.data = data;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public List<Product> getProducts() {
+        return products;
     }
 }

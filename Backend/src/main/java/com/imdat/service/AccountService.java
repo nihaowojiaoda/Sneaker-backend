@@ -5,6 +5,7 @@ import com.imdat.DTO.ChangePasswordRequest;
 import com.imdat.DTO.RegisterPasswordRequest;
 import com.imdat.DTO.UserDetailDTO;
 import com.imdat.entity.Account;
+import com.imdat.entity.Cart;
 import com.imdat.repository.AccountInterface;
 import com.imdat.specification.AccountSpecification;
 import jakarta.transaction.Transactional;
@@ -42,6 +43,8 @@ public class AccountService {
                 registerPasswordRequest.getPhoneNumber(),
                 registerPasswordRequest.getAddress()
         );
+
+        Cart cart = new Cart(nAccount);
 
         accountInterface.save(nAccount);
     }
@@ -105,7 +108,7 @@ public class AccountService {
         account.setActive(flag);
     }
 
-    public Page<Account> getAccount(String inputSearch, String direction, String sortBy, int page, int size, String role) {
+    public Page<Account> getAccount(String inputSearch, String direction, String sortBy, Integer page, Integer size, String role) {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -116,6 +119,9 @@ public class AccountService {
         return accountInterface.findAll(spec, pageable);
     }
 
+    public Account getAccountById(Integer id) {
+        return accountInterface.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+    }
     public List<Account> getAllAccount() {
         return accountInterface.findAll();
     }

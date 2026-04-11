@@ -1,0 +1,6 @@
+/target/
+/.idea/
+/uploads/
+*.class
+*.jar
+.DS_Store

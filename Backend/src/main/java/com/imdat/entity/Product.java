@@ -2,7 +2,6 @@ package com.imdat.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,78 +13,80 @@ public class Product {
     private Integer id;
 
     @NotBlank
-    private String name;
+    private String productName;
+
+    @NotBlank
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
-    @NotNull
-    private double price;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
-    @NotNull
-    private int stock;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ProductVariant> productVariants = new ArrayList<>();
 
-    @NotBlank
-    private String description;
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
+    private ProductImage productImage;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Image> images = new ArrayList<>();
-
-    public Product(String name, double price, int stock, String description) {
-        this.name = name;
-        this.price = price;
-        this.stock = stock;
+    public Product(String productName, String description, ProductImage productImage, Category category, Brand brand) {
+        this.productName = productName;
         this.description = description;
+        setProductImage(productImage);
+        this.category = category;
+        this.brand = brand;
     }
 
-    public Product() {}
-
-    public String getName() {
-        return name;
+    public Product() {
     }
 
-    public Brand getBrand() {
-        return brand;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public int getStock() {
-        return stock;
+    public String getProductName() {
+        return productName;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public ProductImage getProductImage() {
+        return productImage;
     }
 
-    public void setBrand(Brand brand) {
-        this.brand = brand;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
 
+    public void setProductImage(ProductImage productImage) {
+        this.productImage = productImage;
+        productImage.setProduct(this);
+    }
+
     public Integer getId() {
         return id;
     }
 
-    public List<Image> getImages() {
-        return images;
+    public Brand getBrand() {
+        return brand;
     }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public List<ProductVariant> getProductVariants() {
+        return productVariants;
+    }
+
+    public void setProductVariants(ProductVariant productVariants) {
+        this.productVariants.add(productVariants);
+    }
+
+
 }

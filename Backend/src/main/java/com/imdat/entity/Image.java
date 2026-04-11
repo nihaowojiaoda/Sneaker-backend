@@ -1,5 +1,6 @@
 package com.imdat.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -10,27 +11,30 @@ public class Image {
     private Integer id;
 
     @NotNull
-    private byte[] image;
+    @Lob
+    private byte[] data;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "product_variant_id")
+    private ProductVariant productVariant;
 
-    public Image(byte[] image) {
-        this.image = image;
+    public Image(byte[] data, ProductVariant productVariant) {
+        this.data = data;
+        this.productVariant = productVariant;
     }
 
     public Image() {}
+
+    public byte[] getData() {
+        return data;
+    }
 
     public Integer getId() {
         return id;
     }
 
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
+    public ProductVariant getProductVariant() {
+        return productVariant;
     }
 }

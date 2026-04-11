@@ -6,21 +6,22 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public class RegisterPasswordRequest {
-    @NotBlank
-    @Pattern(regexp = "^[a-zA-Z0-9]{5,15}$")
+    @NotBlank(message = "Tên đăng nhập không được để trống")
+    @Pattern(regexp = "^[a-zA-Z0-9]{5,15}$", message = "Tên đăng nhập chỉ được chứa kí tự và số, dài từ 5 - 15 kí tự")
     private String username;
 
     @NotBlank
-    @Size(min = 8, max = 20)
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$")
+    @Size(min = 6, max = 35, message = "Mật khẩu phải dài từ 6 - 35 kí tự")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).*$",
+             message = "Mật khẩu phải có ít nhất 1 chữ viết hoa, 1 chữ số và 1 kí tự đặc biệt")
     private String password;
 
-    @Email
-    @NotBlank
+    @NotBlank(message = "Email không được để trống")
+    @Email(message = "Email không đúng định dạng")
     private String email;
 
-    @NotBlank
-    @Pattern(regexp = "^(0|\\+84)(\\d{9})$")
+    @NotBlank(message = "SDT không được để trống")
+    @Pattern(regexp = "^(0|\\+84)(\\d{9})$", message = "SDT không đúng định dạng")
     private String phoneNumber;
 
     private String address;

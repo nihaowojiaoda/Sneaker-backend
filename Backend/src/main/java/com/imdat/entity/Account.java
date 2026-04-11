@@ -1,5 +1,6 @@
 package com.imdat.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -7,9 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -45,14 +44,17 @@ public class Account {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
+    @JsonIgnore
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Cart cart;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "account")
-    private Invoice invoice;
+    @JsonIgnore
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Invoice> invoices;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChangePasswordRequest> changePasswordRequests = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private List<ChangePasswordRequest> changePasswordRequests;
 
     public Account() {}
 
@@ -124,8 +126,18 @@ public class Account {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
+
+    public Cart getCart() {return this.cart;}
+
+    public void setInvoices(Invoice invoice) {
+        this.invoices.add(invoice);
     }
 
     public Account(String username, String password, String email, String phoneNumber, String address) {

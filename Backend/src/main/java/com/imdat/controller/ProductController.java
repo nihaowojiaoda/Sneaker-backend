@@ -1,42 +1,54 @@
 package com.imdat.controller;
 
+import com.imdat.DTO.ProductDetailDTO;
 import com.imdat.entity.Product;
 import com.imdat.service.ProductService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("api/v1/product")
+@RequestMapping
 public class ProductController {
+    @Autowired
     private ProductService productService;
 
-    public ProductController(ProductService productService) {
-        this.productService = productService;
+    //Thêm sản phẩm(ADMIN)
+    @PostMapping("admin/product")
+    public void addProduct(@Valid @RequestBody ProductDetailDTO productDetailDTO) {
+        productService.addProduct(productDetailDTO);
     }
 
-    @GetMapping
-    public List<Product> getProduct() {
-        return productService.getAllProduct();
-    }
-
-    @GetMapping("{id}")
+    //Lấy sản phẩm theo id(Auth)
+    @GetMapping("auth/product/{id}")
     public Product getProductById(@PathVariable Integer id) {
         return productService.getProductById(id);
     }
 
-    @PostMapping
-    public void addNewProduct(@RequestBody Product product) {
-        productService.insertProduct(product);
+    //Sửa sản phẩm theo Id(ADMIN)
+    @PutMapping("admin/product/{id}")
+    public void modifyProductById(@PathVariable Integer id, @Valid @RequestBody ProductDetailDTO productDetailDTO) {
+        productService.modifyProductById(id, productDetailDTO);
     }
 
-    @DeleteMapping("{id}")
+    //Lọc, tìm kiếm sản phẩm(ADMIN)
+    @GetMapping("admin/product_page")
+    public Page<Product> getProduct(
+            @RequestParam(required = false) String inputSearch,
+            @RequestParam(required = false) String brand,
+            @RequestParam(required = false) String category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ) {
+        return productService.getProduct(inputSearch, direction,brand, category, sortBy, page, size);
+    }
+
+    //Xóa sản phẩm(Admin)
+    @DeleteMapping("admin/product/{id}")
     public void removeProductById(@PathVariable Integer id) {
-        productService.removeProductById(id);
+        productService.deleteProductById(id);
     }
-
-    @PutMapping("{id}")
-    public void updateProductById(@PathVariable Integer id, @RequestBody Product product) { productService.updateProductById(id, product);}
-
-
 }

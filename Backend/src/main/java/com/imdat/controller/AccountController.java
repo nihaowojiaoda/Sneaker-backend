@@ -6,6 +6,7 @@ import com.imdat.DTO.RegisterPasswordRequest;
 import com.imdat.entity.Account;
 import com.imdat.security.JwtService;
 import com.imdat.service.AccountService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,18 +32,22 @@ public class AccountController {
     @Autowired
     JwtService jwtService;
 
+
+    //Xóa Account theo Id (ADMIN)
     @DeleteMapping("/admin/account/{id}")
     public void deleteAccountById(@PathVariable Integer id) {
         this.accountService.removeAccountById(id);
     }
 
+    //Đăng kí (AUTH)
     @PostMapping("/auth/register")
-    public void addNewAccount(@RequestBody RegisterPasswordRequest registerPasswordRequest) {
+    public void addNewAccount(@Valid @RequestBody RegisterPasswordRequest registerPasswordRequest) {
         this.accountService.register(registerPasswordRequest);
     }
 
+    //Đăng nhập (AUTH)
     @PostMapping("/auth/login")
-    public String login(@RequestBody LoginRequest request) {
+    public String login(@Valid @RequestBody LoginRequest request) {
 
         Authentication authentication =
                 authenticationManager.authenticate(
@@ -57,6 +62,7 @@ public class AccountController {
     }
 
 
+    //Lọc, Tìm kiếm Account (ADMIN)
     @GetMapping("/admin/account")
     public ResponseEntity<Page<Account>> getSearchAccountByPage(
             @RequestParam(required = false) String inputSearch,
@@ -69,14 +75,15 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAccount(inputSearch, direction, sortBy, page, size, role));
     }
 
+    //Đổi mật khẩu (USER)
     @PutMapping("/user/account/changepassword")
-    public void changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+    public void changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
         accountService.changePassword(changePasswordRequest);
     }
 
-
-    @GetMapping("/auth") //test
-    public List<Account> getAllAccount() {
-        return accountService.getAllAccount();
+    //Lấy account theo Id (ADMIN)
+    @GetMapping("/admin/account/{id}")
+    public Account getAccountById(@PathVariable Integer id) {
+        return accountService.getAccountById(id);
     }
 }

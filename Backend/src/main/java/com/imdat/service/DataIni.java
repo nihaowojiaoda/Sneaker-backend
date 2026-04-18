@@ -52,7 +52,7 @@ public class DataIni implements CommandLineRunner {
 
         Account acc = new Account();
         acc.setUsername("taolaadmin");
-        acc.setPassword(passwordEncoder.encode("123123123Dts!")); // Lưu ý nên encode password
+        acc.setPassword(passwordEncoder.encode("123123123Dts!")); 
         acc.setEmail("taolaadmin@example.com");
         acc.setRole("ROLE_ADMIN");
         acc.setPhoneNumber("0353250191");
@@ -62,7 +62,7 @@ public class DataIni implements CommandLineRunner {
 
         Account acc2 = new Account();
         acc2.setUsername("taolauser");
-        acc2.setPassword(passwordEncoder.encode("123123123Dts!")); // Lưu ý nên encode password
+        acc2.setPassword(passwordEncoder.encode("123123123Dts!")); 
         acc2.setEmail("taolauser@example.com");
         acc2.setRole("ROLE_USER");
         acc2.setPhoneNumber("0353250192");
@@ -78,15 +78,16 @@ public class DataIni implements CommandLineRunner {
         categoryInterface.save(category);
 
 
-        byte[] data = fileUtil.readImage("uploads/product/img.png");
+        byte[] data = new byte[0]; // fileUtil.readImage("uploads/product/img.png");
 
         ProductDetailDTO productDetailDTO = new ProductDetailDTO("Giày Nike", "Giày thể thao Nike",
                 1, 1, data);
         productService.addProduct(productDetailDTO);
 
         List<byte[]> imgsData = new ArrayList<byte[]>();
-        imgsData.add(fileUtil.readImage("uploads/product/img_1.png"));
-        imgsData.add(fileUtil.readImage("uploads/product/img_2.png"));
+
+        // imgsData.add(fileUtil.readImage("uploads/product/img_1.png"));
+        // imgsData.add(fileUtil.readImage("uploads/product/img_2.png"));
 
         ProductVariantDetailDTO productVariantDetailDTO = new ProductVariantDetailDTO("Xanh", 43, 4, 123.0, 123.0, 1, imgsData);
         productVariantService.addProductVariant(productVariantDetailDTO);
@@ -96,7 +97,5 @@ public class DataIni implements CommandLineRunner {
 
         CartItem cartItem1 = new CartItem(3, cart, productVariantService.getProductVariantById(1));
         cartItemInterface.save(cartItem1);
-
-
     }
 }

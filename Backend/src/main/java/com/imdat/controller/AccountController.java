@@ -18,11 +18,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping
 public class AccountController {
     private static final Logger log = LoggerFactory.getLogger(AccountController.class);
+    
     @Autowired
     private AccountService accountService;
 
@@ -32,22 +34,20 @@ public class AccountController {
     @Autowired
     JwtService jwtService;
 
-
-    //Xóa Account theo Id (ADMIN)
     @DeleteMapping("/admin/account/{id}")
     public void deleteAccountById(@PathVariable Integer id) {
         this.accountService.removeAccountById(id);
     }
 
-    //Đăng kí (AUTH)
+
     @PostMapping("/auth/register")
     public void addNewAccount(@Valid @RequestBody RegisterPasswordRequest registerPasswordRequest) {
         this.accountService.register(registerPasswordRequest);
     }
 
-    //Đăng nhập (AUTH)
+
     @PostMapping("/auth/login")
-    public String login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequest request) {
 
         Authentication authentication =
                 authenticationManager.authenticate(
@@ -58,11 +58,12 @@ public class AccountController {
                 );
 
         String token = jwtService.generateToken(request.getUsername());
-        return  token;
+        
+
+        return ResponseEntity.ok(Map.of("token", token));
     }
 
 
-    //Lọc, Tìm kiếm Account (ADMIN)
     @GetMapping("/admin/account")
     public ResponseEntity<Page<Account>> getSearchAccountByPage(
             @RequestParam(required = false) String inputSearch,
@@ -75,13 +76,13 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAccount(inputSearch, direction, sortBy, page, size, role));
     }
 
-    //Đổi mật khẩu (USER)
+
     @PutMapping("/user/account/changepassword")
     public void changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
         accountService.changePassword(changePasswordRequest);
     }
 
-    //Lấy account theo Id (ADMIN)
+
     @GetMapping("/admin/account/{id}")
     public Account getAccountById(@PathVariable Integer id) {
         return accountService.getAccountById(id);

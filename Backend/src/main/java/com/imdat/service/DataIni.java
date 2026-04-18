@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+//@Component
 public class DataIni implements CommandLineRunner {
     @Autowired
     private AccountInterface accountInterface;

@@ -15,6 +15,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import javax.sql.rowset.serial.SerialException;
 import java.io.IOException;
 
+import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
+
 @Component
 public class JwtFilter extends OncePerRequestFilter {
     @Autowired
@@ -30,6 +32,14 @@ public class JwtFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
+
+        if (path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs")
+                || path.startsWith("/swagger-ui.html")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             System.out.println("No Bearer token, continue filter chain");

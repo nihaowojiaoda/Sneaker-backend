@@ -13,6 +13,7 @@ import java.util.List;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Account {
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

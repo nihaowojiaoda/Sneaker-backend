@@ -1,9 +1,10 @@
 package com.imdat.service;
 
-import com.imdat.DTO.AdminUserDetailDTO;
-import com.imdat.DTO.ChangePasswordRequest;
-import com.imdat.DTO.RegisterPasswordRequest;
-import com.imdat.DTO.UserDetailDTO;
+import com.imdat.DTO.require.ChangePasswordReq;
+import com.imdat.DTO.require.RegisterReq;
+import com.imdat.DTO.respone.AdminUserDetailRes;
+import com.imdat.DTO.respone.UserDetailRes;
+import com.imdat.convert.Convert;
 import com.imdat.entity.Account;
 import com.imdat.entity.Cart;
 import com.imdat.repository.AccountInterface;
@@ -34,7 +35,10 @@ public class AccountService {
     @Autowired
     private AccountSpecification accountSpecification;
 
-    public void register(RegisterPasswordRequest registerPasswordRequest) {
+    @Autowired
+    private Convert convert;
+
+    public void register(RegisterReq registerPasswordRequest) {
         String hPassword = passwordEncoder.encode(registerPasswordRequest.getPassword());
         Account nAccount = new Account(
                 registerPasswordRequest.getUsername(),
@@ -50,7 +54,7 @@ public class AccountService {
     }
 
     @Transactional
-    public void changePassword(ChangePasswordRequest changePasswordRequest) {
+    public void changePassword(ChangePasswordReq changePasswordRequest) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
 
@@ -75,9 +79,9 @@ public class AccountService {
         this.accountInterface.deleteById(id);
     }
 
-    public UserDetailDTO getUserAccountProfileById(Integer id) {
+    public UserDetailRes getUserAccountById(Integer id) {
         Account account = accountInterface.findById(id).orElseThrow(() -> new RuntimeException("User Not Found"));
-        return new UserDetailDTO(
+        return new UserDetailRes(
                 account.getUsername(),
                 account.getAddress(),
                 account.getPhoneNumber(),
@@ -85,16 +89,18 @@ public class AccountService {
         );
     }
 
-    public AdminUserDetailDTO getAdminUserAccountProfileById(Integer id) {
+    public AdminUserDetailRes getAdminUserAccountById(Integer id) {
         Account account = accountInterface.findById(id).orElseThrow(() -> new RuntimeException("User Not Found"));
-        return new AdminUserDetailDTO(
+        return new AdminUserDetailRes(
+                account.getId(),
                 account.getUsername(),
                 account.getPhoneNumber(),
                 account.getAddress(),
                 account.getEmail(),
                 account.getRole(),
                 account.getCreatedAt(),
-                account.getUpdatedAt()
+                account.getUpdatedAt(),
+                account.isActive()
         );
     }
 
@@ -108,7 +114,7 @@ public class AccountService {
         account.setActive(flag);
     }
 
-    public Page<Account> getAccount(String inputSearch, String direction, String sortBy, Integer page, Integer size, String role) {
+    public Page<AdminUserDetailRes> getAccount(String inputSearch, String direction, String sortBy, Integer page, Integer size, String role) {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -116,13 +122,13 @@ public class AccountService {
         Specification<Account> spec = Specification.where(AccountSpecification.hasUsernameEmailPhoneNumber(inputSearch))
                 .and(AccountSpecification.hasRole(role));
 
-        return accountInterface.findAll(spec, pageable);
+        Page<Account> accountPage = accountInterface.findAll(spec, pageable);
+
+        return accountPage.map(convert::convertAccount);
     }
 
-    public Account getAccountById(Integer id) {
-        return accountInterface.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-    }
-    public List<Account> getAllAccount() {
-        return accountInterface.findAll();
+    public List<AdminUserDetailRes> getAllAccount() {
+        List<Account> accountList = accountInterface.findAll();
+        return accountList.stream().map(convert::convertAccount).toList();
     }
 }

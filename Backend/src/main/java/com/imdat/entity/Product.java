@@ -1,5 +1,6 @@
 package com.imdat.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Entity
 public class Product {
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -26,16 +28,15 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductVariant> productVariants = new ArrayList<>();
 
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
-    private ProductImage productImage;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Image> images = new ArrayList<>();
 
-    public Product(String productName, String description, ProductImage productImage, Category category, Brand brand) {
+    public Product(String productName, String description, Category category, Brand brand) {
         this.productName = productName;
         this.description = description;
-        setProductImage(productImage);
         this.category = category;
         this.brand = brand;
     }
@@ -51,21 +52,12 @@ public class Product {
         return description;
     }
 
-    public ProductImage getProductImage() {
-        return productImage;
-    }
-
     public void setProductName(String productName) {
         this.productName = productName;
     }
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public void setProductImage(ProductImage productImage) {
-        this.productImage = productImage;
-        productImage.setProduct(this);
     }
 
     public Integer getId() {
@@ -88,5 +80,27 @@ public class Product {
         this.productVariants.add(productVariants);
     }
 
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
 
+    public void setProductVariants(List<ProductVariant> productVariants) {
+        this.productVariants = productVariants;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public void setBrand(Brand brand) {
+        this.brand = brand;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public List<Image> getImages() {
+        return images;
+    }
 }

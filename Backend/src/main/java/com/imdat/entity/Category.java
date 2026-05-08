@@ -9,6 +9,7 @@ import java.util.List;
 
 @Entity
 public class Category {
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

@@ -1,6 +1,11 @@
 package com.imdat.service;
 
-import com.imdat.DTO.ProductVariantDetailDTO;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import com.imdat.DTO.require.ProductVariantReq;
+import com.imdat.DTO.respone.ImageRes;
+import com.imdat.DTO.respone.ProductVariantRes;
+import com.imdat.convert.Convert;
 import com.imdat.entity.Image;
 import com.imdat.entity.Product;
 import com.imdat.entity.ProductVariant;
@@ -9,9 +14,12 @@ import com.imdat.repository.ProductVariantInterface;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProductVariantService {
@@ -21,46 +29,53 @@ public class ProductVariantService {
     @Autowired
     private ProductInterface productInterface;
 
+    @Autowired
+    private Cloudinary cloudinary;
+
+    @Autowired
+    private Convert convert;
+
     @Transactional
-    public void addProductVariant(ProductVariantDetailDTO productVariantDetailDTO) {
-        Product product = productInterface.findById(productVariantDetailDTO.getProductId()).orElseThrow(() -> new RuntimeException("Product not found"));
+    public void addProductVariant(ProductVariantReq productVariantReq) {
+
+        Product product = productInterface.findById(productVariantReq.getProductId())
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
         ProductVariant productVariant = new ProductVariant(
-                productVariantDetailDTO.getColor(),
-                productVariantDetailDTO.getSize(),
-                productVariantDetailDTO.getStock(),
-                productVariantDetailDTO.getPrice(),
-                productVariantDetailDTO.getImportPrice(), product
+                productVariantReq.getColor(),
+                productVariantReq.getSize(),
+                productVariantReq.getStock(),
+                productVariantReq.getPrice(),
+                productVariantReq.getImportPrice(),
+                product
         );
 
         product.setProductVariants(productVariant);
+        productVariantInterface.save(productVariant);
+    }
 
-        List<Image> images = new ArrayList<>();
+    @Transactional
+    public void modifyProductVariantById(Integer id, ProductVariantReq productVariantReq) {
 
-        for (int i = 0; i < productVariantDetailDTO.getDatas().size(); i++) {
-            Image newImage = new Image(productVariantDetailDTO.getDatas().get(i), productVariant);
-            images.add(newImage);
-        }
+        ProductVariant productVariant = productVariantInterface.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product Variant not found"));
 
-        productVariant.setImages(images);
+        if (productVariantReq.getColor() != null) productVariant.setColor(productVariantReq.getColor());
+        if (productVariantReq.getSize() != null) productVariant.setSize(productVariantReq.getSize());
+        if (productVariantReq.getStock() != null) productVariant.setStock(productVariantReq.getStock());
+        if (productVariantReq.getPrice() != null) productVariant.setPrice(productVariantReq.getPrice());
+        if (productVariantReq.getImportPrice() != null) productVariant.setImportPrice(productVariantReq.getImportPrice());
 
         productVariantInterface.save(productVariant);
     }
 
-    public void deleteProductVariantById(Integer id) {
-        productVariantInterface.deleteById(id);
+    @Transactional public ProductVariantRes getProductVariantById(Integer id) {
+        ProductVariant productVariant = productVariantInterface.findById(id).orElseThrow(() -> new RuntimeException("Product variant not found"));
+
+        return convert.convertProductVariant(productVariant);
     }
 
-    public ProductVariant getProductVariantById(Integer id) {
-        return productVariantInterface.findById(id).orElseThrow(() -> new RuntimeException("Product Variant not found"));
-    }
-
-    @Transactional
-    public void modifyProductVariantById(Integer productVariantId, ProductVariantDetailDTO productVariantDetailDTO) {
-        ProductVariant productVariant = productVariantInterface.findById(productVariantId).orElseThrow(() -> new RuntimeException(("Product Variant not found")));
-        if (productVariantDetailDTO.getColor() != null) productVariant.setColor(productVariantDetailDTO.getColor());
-        if (productVariantDetailDTO.getSize() != null) productVariant.setSize(productVariantDetailDTO.getSize());
-        if (productVariantDetailDTO.getStock() != null) productVariant.setStock(productVariantDetailDTO.getStock());
-        if (productVariantDetailDTO.getPrice() != null) productVariant.setPrice(productVariantDetailDTO.getPrice());
-        if (productVariantDetailDTO.getImportPrice() != null) productVariant.setImportPrice(productVariantDetailDTO.getImportPrice());
+    public void deleteProductVariantById(Integer productVariantId) {
+        productVariantInterface.deleteById(productVariantId);
     }
 }

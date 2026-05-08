@@ -1,5 +1,6 @@
 package com.imdat.controller;
 
+import com.imdat.DTO.respone.CartRes;
 import com.imdat.entity.Cart;
 import com.imdat.service.AccountService;
 import com.imdat.service.CartService;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
     @Autowired
     private CartService cartService;
-
 
     //Thêm ProductVariant Vào giỏ hàng (USER)
     @PostMapping("user/cart/{id}")
@@ -33,8 +33,7 @@ public class CartController {
 
     //Lấy giỏ hàng tài khoản (USER)
     @GetMapping("user/cart")
-    public Cart getCart() {
+    public CartRes getCart() {
         return  cartService.getCart();
     }
-
 }

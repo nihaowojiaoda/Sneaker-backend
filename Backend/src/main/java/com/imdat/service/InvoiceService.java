@@ -1,6 +1,8 @@
 package com.imdat.service;
 
-import com.imdat.DTO.InvoiceDetailDTO;
+import com.imdat.DTO.require.InvoiceReq;
+import com.imdat.DTO.respone.InvoiceRes;
+import com.imdat.convert.Convert;
 import com.imdat.entity.*;
 import com.imdat.repository.AccountInterface;
 import com.imdat.repository.CartInterface;
@@ -33,9 +35,12 @@ public class InvoiceService {
     @Autowired
     private InvoiceSpecification invoiceSpecification;
 
-    public Invoice getInvoiceById(Integer id) {
+    @Autowired
+    private Convert convert;
+
+    public InvoiceRes getInvoiceById(Integer id) {
         Invoice invoice = invoiceInterface.findById(id).orElseThrow(() -> new RuntimeException("Invoice not found"));
-        return invoice;
+        return convert.convertInvoice(invoice);
     }
 
     public void deleteInvoiceById(Integer id) {
@@ -43,7 +48,7 @@ public class InvoiceService {
     }
 
     @Transactional
-    public void addInvoice(InvoiceDetailDTO invoiceDetailDTO) {
+    public void addInvoice(InvoiceReq invoiceReq) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
 
@@ -57,10 +62,10 @@ public class InvoiceService {
         }
 
         Invoice invoice = new Invoice();
-        Double totalPrice = 0.0;
+        Long totalPrice = new Long(0);
 
         for (Integer i = 0; i < cartItems.size(); i++) {
-            Double amountPrice = (cartItems.get(i).getProductVariant().getPrice() * cartItems.get(i).getQuantity());
+            Long amountPrice = cartItems.get(i).getProductVariant().getPrice() * cartItems.get(i).getQuantity();
             totalPrice += amountPrice;
             InvoiceDetail invoiceDetail = new InvoiceDetail(amountPrice, cartItems.get(i).getQuantity());
             invoiceDetail.setProductVariant(cartItems.get(i).getProductVariant());
@@ -71,49 +76,48 @@ public class InvoiceService {
         }
 
         invoice.setTotalPrice(totalPrice);
-        invoice.setStatus(invoiceDetailDTO.getStatus());
-        invoice.setPaymentMethod(invoiceDetailDTO.getPaymentMethod());
-        invoice.setShippingAddress(invoiceDetailDTO.getShippingAddress());
-        invoice.setReceiverPhone(invoiceDetailDTO.getReceivePhone());
-        invoice.setReceiverName(invoiceDetailDTO.getReceiveName());
+        invoice.setStatus(invoiceReq.getStatus());
+        invoice.setPaymentMethod(invoiceReq.getPaymentMethod());
+        invoice.setShippingAddress(invoiceReq.getShippingAddress());
+        invoice.setReceiverPhone(invoiceReq.getReceivePhone());
+        invoice.setReceiverName(invoiceReq.getReceiveName());
         invoice.setAccount(account);
 
-        cart.emptyCartItem();
-
+        cart.getCartItems().clear();
         account.setInvoices(invoice);
-
         invoiceInterface.save(invoice);
     }
 
     @Transactional
-    public void modifyInvoiceById(Integer invoiceId, InvoiceDetailDTO invoiceDetailDTO) {
+    public void modifyInvoiceById(Integer invoiceId, InvoiceReq invoiceReq) {
         Invoice invoice = invoiceInterface.findById(invoiceId).orElseThrow(() -> new RuntimeException("Invoice not found"));
 
-        if (invoiceDetailDTO.getStatus() != null) invoice.setStatus(invoiceDetailDTO.getStatus());
-        if (invoiceDetailDTO.getPaymentMethod() != null) invoice.setStatus(invoiceDetailDTO.getPaymentMethod());
-        if (invoiceDetailDTO.getShippingAddress() != null) invoice.setStatus(invoiceDetailDTO.getShippingAddress());
-        if (invoiceDetailDTO.getReceiveName() != null) invoice.setStatus(invoiceDetailDTO.getReceiveName());
-        if (invoiceDetailDTO.getReceivePhone() != null) invoice.setStatus(invoiceDetailDTO.getReceivePhone());
+        if (invoiceReq.getStatus() != null) invoice.setStatus(invoiceReq.getStatus());
+        if (invoiceReq.getPaymentMethod() != null) invoice.setPaymentMethod(invoiceReq.getPaymentMethod());
+        if (invoiceReq.getShippingAddress() != null) invoice.setShippingAddress(invoiceReq.getShippingAddress());
+        if (invoiceReq.getReceiveName() != null) invoice.setReceiverName(invoiceReq.getReceiveName());
+        if (invoiceReq.getReceivePhone() != null) invoice.setReceiverPhone(invoiceReq.getReceivePhone());
     }
 
-    public Page<Invoice> getInvoice(String inputSearch, String direction, String sortBy, Integer page, Integer size, String status) {
+    public Page<InvoiceRes> getInvoice(String inputSearch, String direction, String sortBy, Integer page, Integer size, String status) {
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Specification<Invoice> spec = Specification.where(InvoiceSpecification.hasStatus(status).and(InvoiceSpecification.hasNamePhoneReceiverAddress(inputSearch)));
 
-        return invoiceInterface.findAll(spec, pageable);
+        Page<Invoice> invoicePage = invoiceInterface.findAll(spec, pageable);
+        return invoicePage.map(convert::convertInvoice);
     }
 
     @Transactional
-    public List<Invoice> getInvoiceAccount() {
+    public List<InvoiceRes> getInvoiceAccount() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
 
         Account account = accountInterface.findByUsername(username).orElseThrow(() -> new RuntimeException("Account not found"));
 
-        System.out.println("Số lượng invoiceeeeeeeeeeeeee: " + invoiceInterface.findByAccount(account).size());
-        return invoiceInterface.findByAccount(account);
+        List<Invoice> invoiceList = invoiceInterface.findByAccount(account);
+        return invoiceList.stream().map(convert::convertInvoice).toList();
     }
 }

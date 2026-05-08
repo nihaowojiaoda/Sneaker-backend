@@ -1,7 +1,7 @@
 package com.imdat.service;
 
-import com.imdat.DTO.BrandDTO;
-import com.imdat.DTO.CategoryDTO;
+import com.imdat.DTO.respone.BrandRes;
+import com.imdat.DTO.respone.CategoryRes;
 import com.imdat.entity.Brand;
 import com.imdat.entity.Category;
 import com.imdat.repository.BrandInterface;
@@ -19,29 +19,46 @@ public class BrandNCategoryService {
     @Autowired
     private CategoryInterface categoryInterface;
 
-    public void addBrand(BrandDTO brandDTO) {
-        Brand brand = new Brand(brandDTO.getBrandName(), brandDTO.getData());
+    public void addBrand(BrandRes brandRes) {
+        Brand brand = new Brand(brandRes.getBrandName());
         brandInterface.save(brand);
     }
 
-    public List<Brand> getAllBrand() {
-        return brandInterface.findAll();
+    public List<BrandRes> getAllBrand() {
+        List<Brand> brandList = brandInterface.findAll();
+        return brandList.stream().map(this::convertBrand).toList();
     }
 
     public void deleteBrandById(Integer id) {
         brandInterface.deleteById(id);
     }
 
-    public void addCategory(CategoryDTO categoryDTO) {
-        Category category = new Category(categoryDTO.getCategoryName());
+    public void addCategory(CategoryRes categoryRes) {
+        Category category = new Category(categoryRes.getCategoryName());
         categoryInterface.save(category);
     }
 
-    public List<Category> getAllCategory() {
-        return categoryInterface.findAll();
+    public List<CategoryRes> getAllCategory() {
+        List<Category> categoryList = categoryInterface.findAll();
+
+        return categoryList.stream().map(this::convertCategory).toList();
     }
 
     public void deleteCategoryById(Integer id) {
         categoryInterface.deleteById(id);
+    }
+
+    public CategoryRes convertCategory(Category category) {
+        return new CategoryRes(
+                category.getId(),
+                category.getCategoryName()
+        );
+    }
+
+    public BrandRes convertBrand(Brand brand) {
+        return new BrandRes(
+                brand.getId(),
+                brand.getBrandName()
+        );
     }
 }

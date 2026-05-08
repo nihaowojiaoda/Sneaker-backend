@@ -1,8 +1,10 @@
 package com.imdat.controller;
 
-import com.imdat.DTO.ChangePasswordRequest;
-import com.imdat.DTO.LoginRequest;
-import com.imdat.DTO.RegisterPasswordRequest;
+import com.imdat.DTO.require.ChangePasswordReq;
+import com.imdat.DTO.require.LoginReq;
+import com.imdat.DTO.require.RegisterReq;
+import com.imdat.DTO.respone.AdminUserDetailRes;
+import com.imdat.DTO.respone.UserDetailRes;
 import com.imdat.entity.Account;
 import com.imdat.security.JwtService;
 import com.imdat.service.AccountService;
@@ -32,22 +34,18 @@ public class AccountController {
     @Autowired
     JwtService jwtService;
 
-
-    //Xóa Account theo Id (ADMIN)
     @DeleteMapping("/admin/account/{id}")
     public void deleteAccountById(@PathVariable Integer id) {
         this.accountService.removeAccountById(id);
     }
 
-    //Đăng kí (AUTH)
     @PostMapping("/auth/register")
-    public void addNewAccount(@Valid @RequestBody RegisterPasswordRequest registerPasswordRequest) {
+    public void addNewAccount(@Valid @RequestBody RegisterReq registerPasswordRequest) {
         this.accountService.register(registerPasswordRequest);
     }
 
-    //Đăng nhập (AUTH)
     @PostMapping("/auth/login")
-    public String login(@Valid @RequestBody LoginRequest request) {
+    public String login(@Valid @RequestBody LoginReq request) {
 
         Authentication authentication =
                 authenticationManager.authenticate(
@@ -61,10 +59,8 @@ public class AccountController {
         return  token;
     }
 
-
-    //Lọc, Tìm kiếm Account (ADMIN)
-    @GetMapping("/admin/account")
-    public ResponseEntity<Page<Account>> getSearchAccountByPage(
+    @GetMapping("/admin/account_page")
+    public ResponseEntity<Page<AdminUserDetailRes>> getSearchAccountByPage(
             @RequestParam(required = false) String inputSearch,
             @RequestParam(required = false) String role,
             @RequestParam(defaultValue = "0") int page,
@@ -77,13 +73,18 @@ public class AccountController {
 
     //Đổi mật khẩu (USER)
     @PutMapping("/user/account/changepassword")
-    public void changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
+    public void changePassword(@Valid @RequestBody ChangePasswordReq changePasswordRequest) {
         accountService.changePassword(changePasswordRequest);
     }
 
     //Lấy account theo Id (ADMIN)
     @GetMapping("/admin/account/{id}")
-    public Account getAccountById(@PathVariable Integer id) {
-        return accountService.getAccountById(id);
+    public AdminUserDetailRes getAccountById(@PathVariable Integer id) {
+        return accountService.getAdminUserAccountById(id);
+    }
+
+    @GetMapping("/admin/account")
+    public List<AdminUserDetailRes> getAllAccount() {
+        return accountService.getAllAccount();
     }
 }

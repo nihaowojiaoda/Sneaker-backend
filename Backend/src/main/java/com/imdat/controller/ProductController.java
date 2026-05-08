@@ -1,12 +1,15 @@
 package com.imdat.controller;
 
-import com.imdat.DTO.ProductDetailDTO;
+import com.imdat.DTO.require.ProductReq;
+import com.imdat.DTO.respone.ProductRes;
 import com.imdat.entity.Product;
 import com.imdat.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping
@@ -16,25 +19,25 @@ public class ProductController {
 
     //Thêm sản phẩm(ADMIN)
     @PostMapping("admin/product")
-    public void addProduct(@Valid @RequestBody ProductDetailDTO productDetailDTO) {
-        productService.addProduct(productDetailDTO);
+    public void addProduct(@Valid @RequestBody ProductReq productReq) {
+        productService.addProduct(productReq);
     }
 
     //Lấy sản phẩm theo id(Auth)
     @GetMapping("auth/product/{id}")
-    public Product getProductById(@PathVariable Integer id) {
+    public ProductRes getProductById(@PathVariable Integer id) {
         return productService.getProductById(id);
     }
 
     //Sửa sản phẩm theo Id(ADMIN)
     @PutMapping("admin/product/{id}")
-    public void modifyProductById(@PathVariable Integer id, @Valid @RequestBody ProductDetailDTO productDetailDTO) {
-        productService.modifyProductById(id, productDetailDTO);
+    public void modifyProductById(@PathVariable Integer id, @Valid @RequestBody ProductReq productReq) {
+        productService.modifyProductById(id, productReq);
     }
 
     //Lọc, tìm kiếm sản phẩm(ADMIN)
     @GetMapping("admin/product_page")
-    public Page<Product> getProduct(
+    public Page<ProductRes> getProduct(
             @RequestParam(required = false) String inputSearch,
             @RequestParam(required = false) String brand,
             @RequestParam(required = false) String category,
@@ -50,5 +53,10 @@ public class ProductController {
     @DeleteMapping("admin/product/{id}")
     public void removeProductById(@PathVariable Integer id) {
         productService.deleteProductById(id);
+    }
+
+    @GetMapping("auth/product")
+    public List<ProductRes> getAllProduct() {
+        return productService.getAllProduct();
     }
 }

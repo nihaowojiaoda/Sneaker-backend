@@ -1,19 +1,19 @@
-package com.imdat.DTO;
+package com.imdat.DTO.respone;
 
-public class UserDetailDTO {
+public class UserDetailRes {
     private String username;
     private String phoneNumber;
     private String address;
     private String email;
 
-    public UserDetailDTO(String username, String phoneNumber, String address, String email) {
+    public UserDetailRes(String username, String phoneNumber, String address, String email) {
         this.username = username;
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.email = email;
     }
 
-    public UserDetailDTO() {}
+    public UserDetailRes() {}
 
     public String getUsername() {
         return username;

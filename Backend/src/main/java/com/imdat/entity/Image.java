@@ -11,30 +11,57 @@ public class Image {
     private Integer id;
 
     @NotNull
-    @Lob
-    private byte[] data;
+    private String url;
+
+    @NotNull
+    private String publicId;
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "product_variant_id")
-    private ProductVariant productVariant;
+    @JoinColumn(name = "product_id")
+    private Product product;
 
-    public Image(byte[] data, ProductVariant productVariant) {
-        this.data = data;
-        this.productVariant = productVariant;
+    public Image(String url, String publicId, Product product) {
+        this.url = url;
+        this.publicId = publicId;
+        this.product = product;
     }
 
     public Image() {}
-
-    public byte[] getData() {
-        return data;
-    }
 
     public Integer getId() {
         return id;
     }
 
-    public ProductVariant getProductVariant() {
-        return productVariant;
+    public String getUrl() {
+        return url;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
+    }
+
+    public void setProductVariant(ProductVariant productVariant) {
+        this.product = product;
+    }
+
+    public Product getProductVariant() {
+        return product;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }

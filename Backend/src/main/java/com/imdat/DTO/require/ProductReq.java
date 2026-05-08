@@ -1,11 +1,13 @@
-package com.imdat.DTO;
+package com.imdat.DTO.require;
 
-import jakarta.persistence.Lob;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.springframework.web.multipart.MultipartFile;
 
-public class ProductDetailDTO {
+import java.util.List;
+
+public class ProductReq {
     @NotBlank(message = "Tên sản phẩm không được để trống")
     @Size(min = 5, message = "Tên sản phẩm phải có ít nhất 5 kí tự")
     private String productName;
@@ -17,9 +19,7 @@ public class ProductDetailDTO {
 
     private Integer categoryId;
 
-    @Lob
-    @NotNull(message = "Vui lòng chọn ảnh sản phẩm")
-    private byte[] data;
+    private List<MultipartFile> files;
 
     public String getProductName() {
         return productName;
@@ -37,15 +37,15 @@ public class ProductDetailDTO {
         return categoryId;
     }
 
-    public byte[] getData() {
-        return data;
+    public List<MultipartFile> getFiles() {
+        return files;
     }
 
-    public ProductDetailDTO(String productName, String productDescription, Integer brandId, Integer categoryId, @NotNull(message = "Vui lòng chọn ảnh sản phẩm") byte[] data) {
+    public ProductReq(String productName, String productDescription, Integer brandId, Integer categoryId, List<MultipartFile> files) {
         this.productName = productName;
         this.productDescription = productDescription;
         this.brandId = brandId;
         this.categoryId = categoryId;
-        this.data = data;
+        this.files = files;
     }
 }

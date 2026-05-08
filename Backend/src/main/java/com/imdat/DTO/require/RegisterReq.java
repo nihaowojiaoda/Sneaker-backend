@@ -1,11 +1,11 @@
-package com.imdat.DTO;
+package com.imdat.DTO.require;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public class RegisterPasswordRequest {
+public class RegisterReq {
     @NotBlank(message = "Tên đăng nhập không được để trống")
     @Pattern(regexp = "^[a-zA-Z0-9]{5,15}$", message = "Tên đăng nhập chỉ được chứa kí tự và số, dài từ 5 - 15 kí tự")
     private String username;
@@ -13,7 +13,7 @@ public class RegisterPasswordRequest {
     @NotBlank
     @Size(min = 6, max = 35, message = "Mật khẩu phải dài từ 6 - 35 kí tự")
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).*$",
-             message = "Mật khẩu phải có ít nhất 1 chữ viết hoa, 1 chữ số và 1 kí tự đặc biệt")
+            message = "Mật khẩu phải có ít nhất 1 chữ viết hoa, 1 chữ số và 1 kí tự đặc biệt")
     private String password;
 
     @NotBlank(message = "Email không được để trống")
@@ -26,9 +26,9 @@ public class RegisterPasswordRequest {
 
     private String address;
 
-    RegisterPasswordRequest() {}
+    RegisterReq() {}
 
-    public RegisterPasswordRequest(String username, String password, String email, String phoneNumber, String address) {
+    public RegisterReq(String username, String password, String email, String phoneNumber, String address) {
         this.username = username;
         this.password = password;
         this.email = email;

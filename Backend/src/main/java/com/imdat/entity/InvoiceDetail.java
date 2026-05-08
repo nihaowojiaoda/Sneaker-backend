@@ -12,7 +12,7 @@ public class InvoiceDetail {
     private Integer id;
 
     @NotNull
-    private Double amountPrice;
+    private Long amountPrice;
 
     @NotNull
     private Integer quantity;
@@ -26,7 +26,7 @@ public class InvoiceDetail {
     @JoinColumn(name = "product_variant_id")
     private ProductVariant productVariant;
 
-    public InvoiceDetail(Double amountPrice, Integer quantity) {
+    public InvoiceDetail(Long amountPrice, Integer quantity) {
         this.amountPrice = amountPrice;
         this.quantity = quantity;
     }
@@ -38,11 +38,11 @@ public class InvoiceDetail {
         return quantity;
     }
 
-    public Double getAmountPrice() {
+    public Long getAmountPrice() {
         return amountPrice;
     }
 
-    public void setAmountPrice(Double amountPrice) {
+    public void setAmountPrice(Long amountPrice) {
         this.amountPrice = amountPrice;
     }
 

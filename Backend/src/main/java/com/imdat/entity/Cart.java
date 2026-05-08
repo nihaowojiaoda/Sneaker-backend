@@ -8,6 +8,7 @@ import java.util.List;
 
 @Entity
 public class Cart {
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -17,7 +18,7 @@ public class Cart {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> cartItems = new ArrayList<>();
 
     public Cart(Account account) {
@@ -29,10 +30,6 @@ public class Cart {
 
     public void setCartItems(CartItem cartItem) {
         this.cartItems.add(cartItem);
-    }
-
-    public void emptyCartItem() {
-        this.cartItems = new ArrayList<>();
     }
 
     public List<CartItem> getCartItems() {

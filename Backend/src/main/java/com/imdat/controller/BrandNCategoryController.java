@@ -1,7 +1,7 @@
 package com.imdat.controller;
 
-import com.imdat.DTO.BrandDTO;
-import com.imdat.DTO.CategoryDTO;
+import com.imdat.DTO.respone.BrandRes;
+import com.imdat.DTO.respone.CategoryRes;
 import com.imdat.entity.Brand;
 import com.imdat.entity.Category;
 import com.imdat.service.BrandNCategoryService;
@@ -18,25 +18,25 @@ public class BrandNCategoryController {
     private BrandNCategoryService brandNCategoryService;
 
     @GetMapping("auth/category")
-    public List<Category> getAllCategory() {
+    public List<CategoryRes> getAllCategory() {
         return brandNCategoryService.getAllCategory();
     }
 
     @GetMapping("auth/brand")
-    public List<Brand> getAllBrand() {
+    public List<BrandRes> getAllBrand() {
         return brandNCategoryService.getAllBrand();
     }
 
     @PostMapping("admin/category")
     public void addCategory(
-            @RequestBody CategoryDTO categoryDTO
+            @RequestBody CategoryRes categoryRes
             ) {
-        brandNCategoryService.addCategory(categoryDTO);
+        brandNCategoryService.addCategory(categoryRes);
     }
 
     @PostMapping("admin/brand")
-    public void addBrand(@RequestBody BrandDTO brandDTO) {
-        brandNCategoryService.addBrand(brandDTO);
+    public void addBrand(@RequestBody BrandRes brandRes) {
+        brandNCategoryService.addBrand(brandRes);
     }
 
     @DeleteMapping("admin/category/{id}")

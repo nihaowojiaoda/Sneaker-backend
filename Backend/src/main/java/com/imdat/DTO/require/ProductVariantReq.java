@@ -1,10 +1,11 @@
-package com.imdat.DTO;
+package com.imdat.DTO.require;
 
 import jakarta.validation.constraints.NotNull;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-public class ProductVariantDetailDTO {
+public class ProductVariantReq {
     private String color;
 
     @NotNull(message = "Vui lòng nhập size sản phẩm")
@@ -14,17 +15,14 @@ public class ProductVariantDetailDTO {
     private Integer stock;
 
     @NotNull(message = "Vui lòng nhập giá sản phẩm")
-    private Double price;
+    private Long price;
 
     @NotNull(message = "Vui lòng nhập giá nhập vào sản phẩm")
-    private Double importPrice;
+    private Long importPrice;
 
     private Integer productId;
 
-    @NotNull(message = "Vui lòng chọn ảnh cho sản phẩm")
-    private List<byte[]> datas;
-
-    public ProductVariantDetailDTO() {}
+    public ProductVariantReq() {}
 
     public String getColor() {
         return color;
@@ -38,11 +36,11 @@ public class ProductVariantDetailDTO {
         return stock;
     }
 
-    public Double getPrice() {
+    public Long getPrice() {
         return price;
     }
 
-    public Double getImportPrice() {
+    public Long getImportPrice() {
         return importPrice;
     }
 
@@ -50,17 +48,13 @@ public class ProductVariantDetailDTO {
         return productId;
     }
 
-    public List<byte[]> getDatas() {
-        return datas;
-    }
 
-    public ProductVariantDetailDTO(String color, Integer size, Integer stock, Double price, Double importPrice, Integer productId, List<byte[]> datas) {
+    public ProductVariantReq(String color, Integer size, Integer stock, Long price, Long importPrice, Integer productId) {
         this.color = color;
         this.size = size;
         this.stock = stock;
         this.price = price;
         this.importPrice = importPrice;
         this.productId = productId;
-        this.datas = datas;
     }
 }

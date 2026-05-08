@@ -1,5 +1,7 @@
 package com.imdat.service;
 
+import com.imdat.DTO.respone.CartRes;
+import com.imdat.convert.Convert;
 import com.imdat.entity.Account;
 import com.imdat.entity.Cart;
 import com.imdat.entity.CartItem;
@@ -30,6 +32,9 @@ public class CartService {
 
     @Autowired
     private ProductVariantInterface productVariantInterface;
+
+    @Autowired
+    private Convert convert;
 
     @Transactional
     public void addCartItem(Integer productVariantId) {
@@ -63,7 +68,7 @@ public class CartService {
         CartItem cartItem = cartItemInterface.findById(id).orElseThrow(() -> new RuntimeException("Cart Item not found"));
 
         if (state.equals("plus")) {
-            if(cartItem.getProductVariant().getStock() == 0) {
+            if(cartItem.getProductVariant().getStock() - cartItem.getQuantity() <= 0) {
                 return;
             }
             cartItem.setQuantity(cartItem.getQuantity() + 1);
@@ -78,12 +83,13 @@ public class CartService {
     }
 
     @Transactional
-    public Cart getCart() {
+    public CartRes getCart() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
 
         Account account = accountInterface.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
         Cart cart = account.getCart();
-        return cart;
+
+        return convert.convertCart(cart);
     }
 }

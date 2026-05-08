@@ -3,10 +3,10 @@ package com.imdat.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import org.apache.tomcat.Jar;
 
 @Entity
 public class CartItem {
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

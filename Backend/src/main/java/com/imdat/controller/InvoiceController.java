@@ -1,6 +1,7 @@
 package com.imdat.controller;
 
-import com.imdat.DTO.InvoiceDetailDTO;
+import com.imdat.DTO.require.InvoiceReq;
+import com.imdat.DTO.respone.InvoiceRes;
 import com.imdat.entity.Invoice;
 import com.imdat.service.InvoiceService;
 import jakarta.validation.Valid;
@@ -18,33 +19,33 @@ public class InvoiceController {
 
     //Lấy hóa đơn theo Id (USER, ADMIN)
     @GetMapping("user/invoice/{id}")
-    public Invoice getInvoiceById(@PathVariable Integer id) {
+    public InvoiceRes getInvoiceById(@PathVariable Integer id) {
         return invoiceService.getInvoiceById(id);
     }
 
     //Xóa hóa đơn(ADMIN)
     @DeleteMapping("admin/invoice/{id}")
-    public void deleteInvoiceById(@PathVariable Integer invoiceId) {
-        invoiceService.deleteInvoiceById(invoiceId);
+    public void deleteInvoiceById(@PathVariable Integer id) {
+        invoiceService.deleteInvoiceById(id);
     }
 
     //Thanh toán(USER)
     @PostMapping("user/invoice")
-    public void addInvoice(@Valid @RequestBody InvoiceDetailDTO invoiceDetailDTO) {
-        invoiceService.addInvoice(invoiceDetailDTO);
+    public void addInvoice(@Valid @RequestBody InvoiceReq invoiceReq) {
+        invoiceService.addInvoice(invoiceReq);
     }
 
     //Sửa hóa đơn theo Id(ADMIN)
     @PutMapping("admin/invoice/{id}")
-    public void modifyInvoiceById(@PathVariable Integer invoiceId, @Valid @RequestBody InvoiceDetailDTO invoiceDetailDTO) {
-        invoiceService.modifyInvoiceById(invoiceId, invoiceDetailDTO);
+    public void modifyInvoiceById(@PathVariable Integer id, @Valid @RequestBody InvoiceReq invoiceReq) {
+        invoiceService.modifyInvoiceById(id, invoiceReq);
     }
 
     //Lọc, Tìm kiếm hóa đơn(ADMIN)
     @GetMapping("admin/invoice")
-    public Page<Invoice> getInvoice(
-            @RequestParam(required = false) String inputSearch,
-            @RequestParam(required = false) String status,
+    public Page<InvoiceRes> getInvoice(
+            @RequestParam(required = true) String inputSearch,
+            @RequestParam(required = true) String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
@@ -55,7 +56,7 @@ public class InvoiceController {
 
     //Lấy các hóa đơn của tài khoản(USER)
     @GetMapping("user/account_invoice")
-    public List<Invoice> getInvoiceByAccount() {
+    public List<InvoiceRes> getInvoiceByAccount() {
         return invoiceService.getInvoiceAccount();
     }
 }

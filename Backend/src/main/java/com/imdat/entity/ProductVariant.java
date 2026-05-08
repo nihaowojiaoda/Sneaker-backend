@@ -33,10 +33,10 @@ public class ProductVariant {
     }
 
     @NotNull
-    private Double price;
+    private Long price;
 
     @NotNull
-    private Double importPrice;
+    private Long importPrice;
 
     @JsonIgnore
     @ManyToOne
@@ -51,11 +51,7 @@ public class ProductVariant {
     @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL)
     private List<InvoiceDetail>  invoiceDetails;
 
-    @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Image> images;
-
-
-    public ProductVariant(String color, Integer size, Integer stock, Double price, Double importPrice, Product product) {
+    public ProductVariant(String color, Integer size, Integer stock, Long price, Long importPrice, Product product) {
         this.color = color;
         this.size = size;
         this.stock = stock;
@@ -83,11 +79,11 @@ public class ProductVariant {
         return isActive;
     }
 
-    public Double getPrice() {
+    public Long getPrice() {
         return price;
     }
 
-    public Double getImportPrice() {
+    public Long getImportPrice() {
         return importPrice;
     }
 
@@ -107,21 +103,17 @@ public class ProductVariant {
         isActive = active;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(Long price) {
         this.price = price;
     }
 
-    public void setImportPrice(Double importPrice) {
+    public void setImportPrice(Long importPrice) {
         this.importPrice = importPrice;
     }
 
     public void setProduct(Product product) {
         product.setProductVariants(this);
         this.product = product;
-    }
-
-    public void setImages(List<Image> images) {
-        this.images = images;
     }
 
     public Integer getId() {
@@ -138,9 +130,5 @@ public class ProductVariant {
 
     public List<InvoiceDetail> getInvoiceDetails() {
         return invoiceDetails;
-    }
-
-    public List<Image> getImages() {
-        return images;
     }
 }

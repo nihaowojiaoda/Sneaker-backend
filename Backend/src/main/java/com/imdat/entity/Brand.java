@@ -11,6 +11,7 @@ import java.util.List;
 
 @Entity
 public class Brand {
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -18,17 +19,12 @@ public class Brand {
     @NotBlank
     private String brandName;
 
-    @NotNull
-    @Lob
-    private Byte[] data;
-
     @JsonIgnore
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)
     private List<Product> products = new ArrayList<>();
 
-    public Brand(String brandName, Byte[] data) {
+    public Brand(String brandName) {
         this.brandName = brandName;
-        this.data = data;
     }
 
     public Brand() {}
@@ -37,16 +33,8 @@ public class Brand {
         return brandName;
     }
 
-    public Byte[] getData() {
-        return data;
-    }
-
     public void setBrandName(String brandName) {
         this.brandName = brandName;
-    }
-
-    public void setData(Byte[] data) {
-        this.data = data;
     }
 
     public Integer getId() {

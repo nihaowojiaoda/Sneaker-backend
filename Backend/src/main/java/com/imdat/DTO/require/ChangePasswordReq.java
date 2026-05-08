@@ -1,25 +1,25 @@
-package com.imdat.DTO;
+package com.imdat.DTO.require;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public class ChangePasswordRequest {
+public class ChangePasswordReq {
     @NotBlank(message = "Mật khẩu hiện tại không được để trống")
     private String oldPassword;
 
     @NotBlank(message = "Mật khẩu mới không được để trống")
     @Size(min = 6, max = 35, message = "Mật khẩu phải dài từ 6 - 35 kí tự")
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$",
-    message = "Mật khẩu phải có ít nhất 1 chữ viết hoa, 1 chữ số và 1 kí tự đặc biệt")
+            message = "Mật khẩu phải có ít nhất 1 chữ viết hoa, 1 chữ số và 1 kí tự đặc biệt")
     private String newPassword;
 
     @NotBlank(message = "Mật khẩu xác nhận không được để trống")
     private String confirmPassword;
 
-    public ChangePasswordRequest() {}
+    public ChangePasswordReq() {}
 
-    public ChangePasswordRequest(String oldPassword, String newPassword, String confirmPassword) {
+    public ChangePasswordReq(String oldPassword, String newPassword, String confirmPassword) {
         this.oldPassword = oldPassword;
         this.newPassword = newPassword;
         this.confirmPassword = confirmPassword;

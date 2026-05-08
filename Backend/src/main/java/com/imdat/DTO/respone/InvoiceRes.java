@@ -1,22 +1,12 @@
-package com.imdat.entity;
+package com.imdat.DTO.respone;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Invoice {
-    @JsonIgnore
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class InvoiceRes {
+    @NotNull
     private Integer id;
 
     @NotNull
@@ -37,31 +27,29 @@ public class Invoice {
     @NotBlank
     private String receiverName;
 
-    @CreatedDate
+    @NotNull
     private LocalDateTime createdAt;
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "account_id")
-    private Account account;
+    @NotNull
+    private List<InvoiceDetailRes> invoiceDetailResList;
 
-    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL)
-    private List<InvoiceDetail> invoiceDetails = new ArrayList<>();
-
-    public Invoice(Long totalPrice, String status, String paymentMethod, String shippingAddress, String receiverPhone, String receiverName) {
+    public InvoiceRes(Integer id ,Long totalPrice, String status, String paymentMethod, String shippingAddress, String receiverPhone, String receiverName, LocalDateTime createdAt, List<InvoiceDetailRes> invoiceDetailResList) {
+        this.id = id;
         this.totalPrice = totalPrice;
         this.status = status;
         this.paymentMethod = paymentMethod;
         this.shippingAddress = shippingAddress;
         this.receiverPhone = receiverPhone;
         this.receiverName = receiverName;
+        this.createdAt = createdAt;
+        this.invoiceDetailResList = invoiceDetailResList;
     }
 
-    public Invoice() {
+    public InvoiceRes() {
     }
 
-    public void setInvoiceDetails(InvoiceDetail invoiceDetails) {
-        this.invoiceDetails.add(invoiceDetails);
+    public Integer getId() {
+        return id;
     }
 
     public Long getTotalPrice() {
@@ -88,6 +76,14 @@ public class Invoice {
         return receiverName;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public List<InvoiceDetailRes> getInvoiceDetailResList() {
+        return invoiceDetailResList;
+    }
+
     public void setTotalPrice(Long totalPrice) {
         this.totalPrice = totalPrice;
     }
@@ -112,23 +108,13 @@ public class Invoice {
         this.receiverName = receiverName;
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public List<InvoiceDetail> getInvoiceDetails() {
-        return invoiceDetails;
+    public void setInvoiceDetailResList(List<InvoiceDetailRes> invoiceDetailResList) {
+        this.invoiceDetailResList = invoiceDetailResList;
     }
 }
+
+

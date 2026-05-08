@@ -1,20 +1,21 @@
-package com.imdat.DTO;
-
-import org.springframework.cglib.core.Local;
+package com.imdat.DTO.respone;
 
 import java.time.LocalDateTime;
 
-public class AdminUserDetailDTO {
+public class AdminUserDetailRes {
+    private Integer id;
     private String username;
     private String phoneNumber;
     private String address;
     private String email;
     private String role;
+    private Boolean isActive;
     private LocalDateTime createAt;
     private LocalDateTime modifyAt;
 
-    public AdminUserDetailDTO(String username, String phoneNumber, String address, String email, String role,
-        LocalDateTime createAt, LocalDateTime modifyAt) {
+    public AdminUserDetailRes(Integer id,String username, String phoneNumber, String address, String email, String role,
+                              LocalDateTime createAt, LocalDateTime modifyAt, Boolean isActive) {
+        this.id = id;
         this.username = username;
         this.phoneNumber = phoneNumber;
         this.address = address;
@@ -22,9 +23,10 @@ public class AdminUserDetailDTO {
         this.role = role;
         this.createAt = createAt;
         this.modifyAt = modifyAt;
+        this.isActive = isActive;
     }
 
-    public AdminUserDetailDTO() {}
+    public AdminUserDetailRes() {}
 
     public String getUsername() {
         return username;
@@ -54,6 +56,8 @@ public class AdminUserDetailDTO {
         return modifyAt;
     }
 
+    public Boolean getIsActive() {return isActive;}
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -72,5 +76,31 @@ public class AdminUserDetailDTO {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public void setIsActive(Boolean isActive) {this.isActive = isActive;}
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public void setCreateAt(LocalDateTime createAt) {
+        this.createAt = createAt;
+    }
+
+    public void setModifyAt(LocalDateTime modifyAt) {
+        this.modifyAt = modifyAt;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Boolean getActive() {
+        return isActive;
     }
 }
